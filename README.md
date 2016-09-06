@@ -21,3 +21,9 @@
 	움직임 추적  
 	소리 감지 
 	모드 설정(재택/외출)  
+	
+#MileStone
+
+###1. milestone of development
+  ![Result0](./img/plan1.png)
+  ![Result1](./img/plan2.png)
