@@ -8,7 +8,7 @@ public class ServerLog {
 	private Logger logger;
 
 	private ServerLog(){
-		PropertyConfigurator.configure("log4j.properties");
+		PropertyConfigurator.configure("/home/pi/IoT-Platform/piserver/bin/com/socket/log4j.properties");
 		logger = (Logger)Logger.getInstance("ServerLog");
 	}
 
