@@ -1,47 +1,60 @@
 package com.example.areumelec.smartpackage;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 public class SensorCheck extends AppCompatActivity {
-    private static final String ip = "192.168.44.1";
-    private static final int port = 5002;
-    protected DatagramSocket ds = null;
-    protected Thread socketThread = null;
-    private boolean change = true;
-    private String sndOpkey;
+    private Handler mainHandler;
+    private SocketListener sl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sensor_check);
+
+        this.getMessage();
+        this.request();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
 
-    public class Client implements Runnable {
-
-        @Override
-        public void run() {
-            try {
-                ds = new DatagramSocket();
-                SocketAddress socketAddress = new InetSocketAddress(ip, port);
-                byte[] buffer = sndOpkey.getBytes();
-                DatagramPacket dp = new DatagramPacket(buffer, buffer.length, socketAddress);
-                ds.send(dp);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            closeSocket();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-    socketThread = new Thread(new Client());
-    socketThread.start();
-    socketThread = null;
 
+    public void getMessage()
+    {
+        sl = new SocketListener(getApplicationContext(), mainHandler);
+        sl.start();
+    }
+
+    public void sendMsg(String msg) throws IOException {
+        SocketManager.sendMsg(msg);
+    }
+
+    public void closeSocket() throws IOException {
+        SocketManager.closeSocket();
+    }
+
+    public void request() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    sendMsg("sensor");
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 }
