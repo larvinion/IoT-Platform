@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 import java.io.IOException;
 
+import com.example.areumelec.Model.SocketListener;
+import com.example.areumelec.Model.SocketManager;
+
 public class SensorCheck extends AppCompatActivity {
     private Handler mainHandler;
     private SocketListener sl;

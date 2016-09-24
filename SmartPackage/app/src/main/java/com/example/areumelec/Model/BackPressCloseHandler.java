@@ -1,4 +1,4 @@
-package com.example.areumelec.smartpackage;
+package com.example.areumelec.Model;
 
 import android.app.Activity;
 import android.widget.Toast;

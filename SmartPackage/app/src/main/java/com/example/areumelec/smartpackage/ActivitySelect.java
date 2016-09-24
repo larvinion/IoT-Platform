@@ -1,15 +1,13 @@
 package com.example.areumelec.smartpackage;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteAbortException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+
+import com.example.areumelec.Model.BackPressCloseHandler;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class ActivitySelect extends AppCompatActivity {
     //메인 액티비티, 기능 선택
@@ -26,6 +24,7 @@ public class ActivitySelect extends AppCompatActivity {
         backPressCloseHandler = new BackPressCloseHandler(this);
 
         mn_layout = (LinearLayout)findViewById(R.id.mn_layout);
+        FirebaseMessaging.getInstance().subscribeToTopic("notice");
     }
 
     public void startStreaming(View v){
