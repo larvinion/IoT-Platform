@@ -1,6 +1,10 @@
 [
     {
-        "merged": "/Users/hbkim/Documents/IoT-Platform/SmartPackage/vitamio/build/intermediates/res/merged/androidTest/debug/raw/libarm.so",
-        "source": "/Users/hbkim/Documents/IoT-Platform/SmartPackage/vitamio/build/intermediates/bundles/debug/res/raw/libarm.so"
+        "merged": "C:\\Users\\hbkim\\Documents\\IoT-Platform\\SmartPackage\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\raw\\libarm.so",
+        "source": "C:\\Users\\hbkim\\Documents\\IoT-Platform\\SmartPackage\\vitamio\\build\\intermediates\\bundles\\debug\\res\\raw\\libarm.so"
+    },
+    {
+        "merged": "C:\\Users\\HaJiYeonComputer\\Documents\\IoT-Platform\\SmartPackage\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\raw\\libarm.so",
+        "source": "C:\\Users\\HaJiYeonComputer\\Documents\\IoT-Platform\\SmartPackage\\vitamio\\build\\intermediates\\bundles\\debug\\res\\raw\\libarm.so"
     }
 ]
