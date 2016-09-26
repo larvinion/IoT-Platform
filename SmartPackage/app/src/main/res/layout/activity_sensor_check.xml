@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,34 +8,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.areumelec.smartpackage.SensorCheck">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.madwin.customlistviewexample.MainActivity"
+    tools:showIn="@layout/activity_sensor_check">
 
-    <TextView
+    <ListView
+        android:id="@+id/listview1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView1"
-        android:text="sensor Value"
-        android:textSize="30sp"
-        android:textAlignment="center" />
-
-    <SurfaceView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/sensorValue1"
-        android:layout_below="@+id/textView1"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="false"
-        android:layout_marginTop="300dp"
-        android:layout_marginBottom="50dp" />
-
-    <SurfaceView
-        android:layout_width="fill_parent"
-        android:layout_height="300dp"
-        android:id="@+id/sensorValue2"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="500dp" />
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>

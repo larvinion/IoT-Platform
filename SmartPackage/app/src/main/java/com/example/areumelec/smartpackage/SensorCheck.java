@@ -22,7 +22,7 @@ public class SensorCheck extends AppCompatActivity {
         this.request();
     }
 
-    @Override
+
     protected void onStop() {
         super.onStop();
 
