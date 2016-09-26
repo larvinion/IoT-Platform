@@ -35,7 +35,7 @@ public class ActivitySelect extends AppCompatActivity {
 
     public void sensorCheck(View v){
         //sensor 버튼 클릭 시
-        Intent intent = new Intent(ActivitySelect.this, Camera.class);
+        Intent intent = new Intent(ActivitySelect.this, SensorCheck.class);
         startActivity(intent);
     }
 
