@@ -13,9 +13,7 @@ public class CommandExecutorSensor implements CommandExecutor{
 
 		try{
 			nowRun = true;
-			/*
-			 *  request.
-			 */
+			
 			request = "CommandExecutorSensor ! request=[" + request + "]";
 
 			communicator.sendResponse(request);

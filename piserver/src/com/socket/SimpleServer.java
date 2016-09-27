@@ -85,7 +85,7 @@ public class SimpleServer implements TCPServer {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	public void shutDownServer() throws Exception{
 		isClosed = true;
