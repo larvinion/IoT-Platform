@@ -13,10 +13,8 @@ public class CommandExecutorJobAdd implements CommandExecutor{
 
 		try{
 			nowRun = true;
-			/*
-			 * �������� ó���� ������ request�� ���´�.
-			 */
-			request = "CommandExecutorJobAdd �� ȣ���߳׿�! request=[" + request + "]";
+		
+			request = "CommandExecutorJobAdd request [" + request + "]";
 
 			communicator.sendResponse(request);
 			nowRun = false;

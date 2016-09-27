@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -123,8 +125,9 @@ public class SensorCheck extends AppCompatActivity {
 
     public class SocketTask extends AsyncTask<Void, byte[], Boolean> {
         Socket nsocket; //Network Socket
-        InputStream nis; //Network Input Stream
-        OutputStream nos; //Network Output Stream
+        DataOutputStream dos;
+        DataInputStream dis;
+        SocketAddress sockaddr;
 
         @Override
         protected void onPreExecute() {
@@ -134,27 +137,23 @@ public class SensorCheck extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) { //This runs on a different thread
             boolean result = false;
+            String read;
             try {
                 Log.i("AsyncTask", "doInBackground: Creating socket");
-                SocketAddress sockaddr = new InetSocketAddress("192.168.0.10", 5000);
+//                SocketAddress sockaddr = new InetSocketAddress("192.168.0.10", 5000);
+                sockaddr = new InetSocketAddress("192.168.0.62", 5000);
                 nsocket = new Socket();
                 nsocket.connect(sockaddr); //10 second connection timeout
                 if (nsocket.isConnected()) {
-                    nis = nsocket.getInputStream();
-                    nos = nsocket.getOutputStream();
+                    dis = new DataInputStream(nsocket.getInputStream());
+                    dos = new DataOutputStream(nsocket.getOutputStream());
                     Log.i("AsyncTask", "doInBackground: Socket created, streams assigned");
                     Log.i("AsyncTask", "doInBackground: Waiting for inital data...");
-                    byte[] buffer = new byte[4096];
                     SendDataToServer("add");
-                    int read = nis.read(buffer, 0, 4096); //This is blocking
-                    while(read != -1){
+                    while((read = ReceiveDataFromServer())!= ""){
                         Thread.sleep(2000);
                         SendDataToServer("sensor");
-                        byte[] tempdata = new byte[read];
-                        System.arraycopy(buffer, 0, tempdata, 0, read);
-                        publishProgress(tempdata);
-                        Log.i("AsyncTask", "doInBackground: Got some data");
-                        read = nis.read(buffer, 0, 4096); //This is blocking
+                        Log.i("AsyncTask", "doInBackground: Got some data : "+read);
                     }
                 }
             } catch (IOException e) {
@@ -167,8 +166,8 @@ public class SensorCheck extends AppCompatActivity {
                 result = true;
             } finally {
                 try {
-                    nis.close();
-                    nos.close();
+                    dis.close();
+                    dos.close();
                     nsocket.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -184,7 +183,14 @@ public class SensorCheck extends AppCompatActivity {
             try {
                 if (nsocket.isConnected()) {
                     Log.i("AsyncTask", "SendDataToNetwork: Writing received message to socket");
-                    nos.write(cmd.getBytes());
+                    byte[] sendWhat = cmd.getBytes("ms949");
+                    int writeLen= sendWhat.length;
+
+                    dos.writeInt(writeLen);
+                    dos.flush();
+
+                    dos.write(sendWhat, 0, writeLen);
+                    dos.flush();
                 } else {
                     Log.i("AsyncTask", "SendDataToNetwork: Cannot send message. Socket is closed");
                 }
@@ -193,6 +199,20 @@ public class SensorCheck extends AppCompatActivity {
             }
         }
 
+        public String ReceiveDataFromServer() {
+
+            String retMsg = null;
+            try {
+                int size = dis.readInt();
+                byte[] receiveWhat = new byte[size];
+                dis.read(receiveWhat);
+                retMsg = new String(receiveWhat, "ms949");
+
+            } catch (Exception e) {
+                Log.i("AsyncTask", "ReceiveDataFromNetwork: Message receive failed. Caught an exception");
+            }
+            return retMsg;
+        }
         @Override
         protected void onProgressUpdate(byte[]... values) {
             if (values.length > 0) {
