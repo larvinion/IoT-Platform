@@ -4,14 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-
-    <permission
-        android:name="com.icelancer.androidgcmclient.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="com.icelancer.androidgcmclient.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -33,7 +26,7 @@
         </activity>
 
         <activity android:name=".SensorCheck" />
-        <activity android:name="com.example.areumelec.Model.BackPressCloseHandler" />
+        <activity android:name=".BackPressCloseHandler" />
        <!--  <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" /> -->
@@ -47,7 +40,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".FirebaseInstanceIDService" >
+            android:name=".MyFirebaseInstanceIDService" >
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
