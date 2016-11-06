@@ -11,6 +11,7 @@ import com.socket.connectionhandler.ConnectionHandlerManager;
 import com.socket.connectionhandler.NormalConnectionHandlerManager;
 import com.socket.executor.CommandExecutor;
 import com.socket.executor.CommandExecutorJobAdd;
+import com.socket.executor.CommandExecutorSensor;
 import com.socket.requesthandler.CommandRequestHandler;
 
 public class SimpleServer implements TCPServer {
@@ -37,23 +38,23 @@ public class SimpleServer implements TCPServer {
 	}
 
 	/*
-	 * 소켓서버를 실행한다.
+	 * start server
 	 */
 	public void startServer() throws Exception
 	{
-		printMessage("소켓 서버를 실행합니다..");
-		server = new ServerSocket(5000); //5000번 포트로 리슨
+		printMessage("server port open..");
+		server = new ServerSocket(5000); //5000
 
-		//클라이언트와의 연결 대기 루프
+		//
 		while( true ){
 
 			try{
-				printMessage("새로운 client의 연결요청을 기다립니다.");
+				printMessage(" client.");
 
 				Socket connectedSocket = server.accept(); //
-				printMessage("Client와 연결이 이루어지고 서비스를 시작합니다.");
+				printMessage("Client connected.");
 
-				processService(connectedSocket, threadID++ ); //별도의 쓰레드를 생성해서 서비스 처리를 위임한다.
+				processService(connectedSocket, threadID++ ); //
 			}catch(Exception e){
 				if( !(e instanceof java.net.SocketException && isClosed == true) ){
 					printMessage("startServer() error", e);
@@ -64,7 +65,7 @@ public class SimpleServer implements TCPServer {
 	}
 
 	/*
-	 * 신규 클라이언트 접속시마다 새로운 Thread를 생성해서 서비스 처리를 위임한다.
+	 *  Thread.
 	 */
 	private void processService(Socket connectedSocket, int serviceID) throws IOException {
 
@@ -73,6 +74,7 @@ public class SimpleServer implements TCPServer {
 			requestHandler = new CommandRequestHandler();
 			requestHandler.addCommand("add", new CommandExecutorJobAdd());
 			requestHandler.addCommand("exit", new CommandExecutorExit());
+			requestHandler.addCommand("sensor", new CommandExecutorSensor());
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -83,7 +85,7 @@ public class SimpleServer implements TCPServer {
 	}
 
 	/*
-	 * ���Ϲ��� �����Ѵ�.
+	 *
 	 */
 	public void shutDownServer() throws Exception{
 		isClosed = true;
@@ -94,11 +96,11 @@ public class SimpleServer implements TCPServer {
 
 	}
 
-	//�α� ���� �Լ�(msg)
+	//(msg)
 	private void printMessage(String msg){
 		ServerLog.getInstance().info(this.getClass().getName(), msg);
 	}
-	//�α� ���� �Լ�(msg, throwable)
+	//(msg, throwable)
 	private void printMessage(String msg, Throwable e){
 		ServerLog.getInstance().info(this.getClass().getName(), msg, e);
 	}

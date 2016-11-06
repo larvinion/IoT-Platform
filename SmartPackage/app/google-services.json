@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "858338530219",
+    "firebase_url": "https://smartpackage-142611.firebaseio.com",
+    "project_id": "smartpackage-142611",
+    "storage_bucket": "smartpackage-142611.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:858338530219:android:841e60758794ecf2",
+        "android_client_info": {
+          "package_name": "com.example.areumelec.smartpackage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "858338530219-ro56fci0305ig04nha328k2nihktnevt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGlGQxRNs2lglldcS4gRx_7JepQNNBEiQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

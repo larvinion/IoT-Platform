@@ -14,10 +14,8 @@ public class CommandExecutorJob implements CommandExecutor{
 
 		try{
 			nowRun = true;
-			/*
-			 * �������� ó�� �� ������ request�� ���´�.
-			 */
-			communicator.sendResponse(request); //ó�������� Client�� ����!
+
+			communicator.sendResponse(request);
 			nowRun = false;
 		}catch(Exception e){
 			nowRun = false;
@@ -25,13 +23,10 @@ public class CommandExecutorJob implements CommandExecutor{
 			e.printStackTrace();
 		}
 	}
-	/*
-	 * CommunicatorUTF�� stop�ؾ�  STAT_IMMEDIATE�� ��ȯ!
-	 * ������ �Ʒ� stop()�Լ��� ��ü���� ���� ������ ����!
-	 */
+	
 	public int stop() {
 
-		ServerLog.getInstance().info(this.getClass().getName(), "stop�� ���ɼ����մϴ�.");
+		ServerLog.getInstance().info(this.getClass().getName(), "stop.");
 
 		if( nowRun ) return Stopable.STAT_SOON;
 		return  Stopable.STAT_IMMEDIATE;

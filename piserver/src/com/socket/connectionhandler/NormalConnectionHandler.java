@@ -41,7 +41,7 @@ public class NormalConnectionHandler implements ConnectionHandler, Runnable {
 
 		String msg;
 
-		while(keepConnect_){ //������ ���� ����
+		while(keepConnect_){ 
 			try{
 
 				ServerLog.getInstance().info(this.getClass().getName(), "Wait until request message arrive from client [ID:" + threadID_ + "]");
@@ -51,7 +51,6 @@ public class NormalConnectionHandler implements ConnectionHandler, Runnable {
 
 				ServerLog.getInstance().info(this.getClass().getName(), "Handling request message.[ID:" + threadID_ + "]");
 			}catch(Exception e){
-				//EOFException�� �ƴϸ鼭 ������ �������� ����(stop=false) ������ ������.
 				ServerLog.getInstance().info(this.getClass().getName(), "Handling is finished.[ID:" + threadID_ + "]");
 				if( !(e instanceof EOFException) && !stop ){
 					ServerLog.getInstance().info(this.getClass().getName(), "NormalConnectionHandler.run() error[ID:" + threadID_ + "]", e);
@@ -65,13 +64,13 @@ public class NormalConnectionHandler implements ConnectionHandler, Runnable {
 
 	public int stop() {
 
-		ServerLog.getInstance().info(this.getClass().getName(), "stop������ �����մϴ�.[ID:" + threadID_ + "]");
+		ServerLog.getInstance().info(this.getClass().getName(), "stop[ID:" + threadID_ + "]");
 
 		keepConnect_ = false;
 		stop = true;
 
-		int stat1 = communicator_.stop(); //connectedSocket�� close�Ѵ�.!
-		int stat2 = requestHandler_.stop(); //executor ������ �Ϸ��Ǿ��� stop�Ѵ�!
+		int stat1 = communicator_.stop(); 
+		int stat2 = requestHandler_.stop(); 
 		if( stat1 == Stopable.STAT_NO || stat2 == Stopable.STAT_NO ) return Stopable.STAT_NO;
 		if( stat1 == Stopable.STAT_SOON || stat2 == Stopable.STAT_SOON ) return Stopable.STAT_SOON;
 
