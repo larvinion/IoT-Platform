@@ -25,10 +25,6 @@ public class CommandExecutorJobAdd implements CommandExecutor{
 		}
 	}
 
-	/*
-	 * CommunicatorUTF�� stop�ؾ�  STAT_IMMEDIATE�� ��ȯ!
-	 * ������ �Ʒ� stop()�Լ��� ��ü���� ���� ������ ����!
-	 */
 	public int stop() {
 		if( nowRun ) return Stopable.STAT_SOON;
 		return  Stopable.STAT_IMMEDIATE;

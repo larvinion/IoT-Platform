@@ -15,7 +15,6 @@ public class CommandExecutorSensor implements CommandExecutor{
 			nowRun = true;
 			
 			request = "CommandExecutorSensor ! request=[" + request + "]";
-
 			communicator.sendResponse(request);
 			nowRun = false;
 		}catch(Exception e){
@@ -25,10 +24,6 @@ public class CommandExecutorSensor implements CommandExecutor{
 		}
 	}
 
-	/*
-	 * CommunicatorUTF stop  STAT_IMMEDIATE!
-	 * stop()!
-	 */
 	public int stop() {
 		if( nowRun ) return Stopable.STAT_SOON;
 		return  Stopable.STAT_IMMEDIATE;

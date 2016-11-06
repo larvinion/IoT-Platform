@@ -19,7 +19,6 @@ public class CommandRequestHandler extends CommandManager implements RequestHand
 
 	public void processRequest(String request, Communicator communicator) throws Exception {
 
-		//�ϴ� request�� command�� �����ϰ� ����, ���߽� command�� ����ȭ�Ѵ�.
 		String command = request;
 
 		try{
