@@ -26,7 +26,7 @@ import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
 
-public class Camera extends Activity implements OnBufferingUpdateListener, OnCompletionListener, OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
+public class CameraDemo extends Activity implements OnBufferingUpdateListener, OnCompletionListener, OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
@@ -96,7 +96,7 @@ public class Camera extends Activity implements OnBufferingUpdateListener, OnCom
 
             if (path == "") {
                 // Tell the user to provide a media file URL.
-                Toast.makeText(Camera.this, "Please edit MainActivity," + " and set the path variable to your media file URL.", Toast.LENGTH_LONG).show();
+                Toast.makeText(CameraDemo.this, "Please edit MainActivity," + " and set the path variable to your media file URL.", Toast.LENGTH_LONG).show();
                 return;
             }
 //          path = "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov";

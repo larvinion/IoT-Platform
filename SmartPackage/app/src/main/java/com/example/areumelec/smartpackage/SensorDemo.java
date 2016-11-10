@@ -14,7 +14,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 
 
-public class SensorCheck extends AppCompatActivity {
+public class SensorDemo extends AppCompatActivity {
     private SocketTask socketTask;
 
     @Override

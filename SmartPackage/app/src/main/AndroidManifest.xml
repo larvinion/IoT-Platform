@@ -25,13 +25,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SensorCheck" />
-        <activity android:name=".BackPressCloseHandler" />
-       <!--  <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login" /> -->
-        <activity android:name=".ActivitySelect" />
-        <activity android:name=".Camera" />
+        <activity android:name=".SensorDemo" />
+        <activity android:name=".CameraDemo" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".MainActivity" />
 
         <service
             android:name=".MyFirebaseMessagingService">
