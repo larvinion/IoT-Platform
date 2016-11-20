@@ -1,233 +1,263 @@
 package com.example.areumelec.smartpackage;
 
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
+
+import com.example.areumelec.Bluetooth.BluetoothSerialClient;
+import com.example.areumelec.Bluetooth.BluetoothSerialClient.BluetoothStreamingHandler;
+import com.example.areumelec.Bluetooth.BluetoothSerialClient.OnBluetoothEnabledListener;
+import com.example.areumelec.Bluetooth.BluetoothSerialClient.OnScanListener;
 
 
-public class SensorDemo extends AppCompatActivity {
-    private SocketTask socketTask;
+import android.bluetooth.BluetoothDevice;
+
+import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.Set;
+
+import android.widget.ArrayAdapter;
+import android.app.ProgressDialog;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class SensorDemo extends Activity {
+    private LinkedList<BluetoothDevice> mBluetoothDevices = new LinkedList<BluetoothDevice>();
+    private ArrayAdapter<String> mDeviceArrayAdapter;
+
+    private TextView mTextView;
+    private ProgressDialog mLoadingDialog;
+    private AlertDialog mDeviceListDialog;
+    private Menu mMenu;
+    private BluetoothSerialClient mClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sensor_check);
+        setContentView(R.layout.activity_sensor);
 
-        socketTask = new SocketTask();
-        socketTask.execute();
-    }
+        mClient = BluetoothSerialClient.getInstance();
 
-
-    protected void onStop() {
-        super.onStop();
-//        // ATTENTION: This was auto-generated to implement the App Indexing API.
-//        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "SensorCheck Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app URL is correct.
-//                Uri.parse("android-app://com.example.areumelec.smartpackage/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.end(client, viewAction);
-//
-//        // ATTENTION: This was auto-generated to implement the App Indexing API.
-//        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        client.disconnect();
-    }
-
-    public void request() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-//                    sendMsg("sensor");
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-//    void doJSONParser() {
-//        StringBuffer sb = new StringBuffer();
-//
-//        String str =
-//                "[{'name':'배트맨','age':43,'address':'고담'}," +
-//                        "{'name':'슈퍼맨','age':36,'address':'뉴욕'}," +
-//                        "{'name':'앤트맨','age':25,'address':'LA'}]";
-//
-//        try {
-//            JSONArray jarray = new JSONArray(str);   // JSONArray 생성
-//            for (int i = 0; i < jarray.length(); i++) {
-//                JSONObject jObject = jarray.getJSONObject(i);  // JSONObject 추출
-//                String address = jObject.getString("address");
-//                String name = jObject.getString("name");
-//                int age = jObject.getInt("age");
-//
-//                sb.append(
-//                        "주소:" + address +
-//                                "이름:" + name +
-//                                "나이:" + age + "\n"
-//                );
-//            }
-////            tv.setText(sb.toString());
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    } // end doJSONParser()
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-//        // ATTENTION: This was auto-generated to implement the App Indexing API.
-//        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        client.connect();
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "SensorCheck Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app URL is correct.
-//                Uri.parse("android-app://com.example.areumelec.smartpackage/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-    public class SocketTask extends AsyncTask<Void, byte[], Boolean> {
-        Socket nsocket; //Network Socket
-        DataOutputStream dos;
-        DataInputStream dis;
-        SocketAddress sockaddr;
-
-        @Override
-        protected void onPreExecute() {
-            Log.i("AsyncTask", "onPreExecute");
+        if(mClient == null) {
+            Toast.makeText(getApplicationContext(), "Cannot use the Bluetooth device.", Toast.LENGTH_SHORT).show();
+            finish();
         }
 
-        @Override
-        protected Boolean doInBackground(Void... params) { //This runs on a different thread
-            boolean result = false;
-            String read;
-            try {
-                Log.i("AsyncTask", "doInBackground: Creating socket");
-//                SocketAddress sockaddr = new InetSocketAddress("192.168.0.10", 5000);
-                sockaddr = new InetSocketAddress("192.168.0.62", 5000);
-                nsocket = new Socket();
-                nsocket.connect(sockaddr); //10 second connection timeout
-                if (nsocket.isConnected()) {
-                    dis = new DataInputStream(nsocket.getInputStream());
-                    dos = new DataOutputStream(nsocket.getOutputStream());
-                    Log.i("AsyncTask", "doInBackground: Socket created, streams assigned");
-                    Log.i("AsyncTask", "doInBackground: Waiting for inital data...");
-                    SendDataToServer("add");
-                    while((read = ReceiveDataFromServer())!= ""){
-                        Thread.sleep(2000);
-                        SendDataToServer("sensor");
-                        Log.i("AsyncTask", "doInBackground: Got some data : "+read);
+        initProgressDialog();
+        initDeviceListDialog();
+    }
+
+    @Override
+    protected void onPause() {
+        mClient.cancelScan(getApplicationContext());
+        super.onPause();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        enableBluetooth();
+    }
+    private void initProgressDialog() {
+        mLoadingDialog = new ProgressDialog(this);
+        mLoadingDialog.setCancelable(false);
+    }
+    private void initWidget() {
+
+     }
+
+    private void initDeviceListDialog() {
+        mDeviceArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.item_device);
+        ListView listView = new ListView(getApplicationContext());
+        listView.setAdapter(mDeviceArrayAdapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item =  (String) parent.getItemAtPosition(position);
+                for(BluetoothDevice device : mBluetoothDevices) {
+                    if(item.contains(device.getAddress())) {
+                        connect(device);
+                        mDeviceListDialog.cancel();
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.i("AsyncTask", "doInBackground: IOException");
-                result = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.i("AsyncTask", "doInBackground: Exception");
-                result = true;
-            } finally {
-                try {
-                    dis.close();
-                    dos.close();
-                    nsocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Log.i("AsyncTask", "doInBackground: Finished");
             }
-            return result;
+        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select bluetooth device");
+        builder.setView(listView);
+        builder.setPositiveButton("Scan",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        scanDevices();
+                    }
+                });
+        mDeviceListDialog = builder.create();
+        mDeviceListDialog.setCanceledOnTouchOutside(false);
+    }
+
+    private void addDeviceToArrayAdapter(BluetoothDevice device) {
+        if(mBluetoothDevices.contains(device)) {
+            mBluetoothDevices.remove(device);
+            mDeviceArrayAdapter.remove(device.getName() + "\n" + device.getAddress());
         }
+        mBluetoothDevices.add(device);
+        mDeviceArrayAdapter.add(device.getName() + "\n" + device.getAddress() );
+        mDeviceArrayAdapter.notifyDataSetChanged();
 
-        public void SendDataToServer(String cmd) { //You run this from the main thread.
-            try {
-                if (nsocket.isConnected()) {
-                    Log.i("AsyncTask", "SendDataToNetwork: Writing received message to socket");
-                    byte[] sendWhat = cmd.getBytes("ms949");
-                    int writeLen= sendWhat.length;
+    }
 
-                    dos.writeInt(writeLen);
-                    dos.flush();
-
-                    dos.write(sendWhat, 0, writeLen);
-                    dos.flush();
+    private void enableBluetooth() {
+        BluetoothSerialClient btSet =  mClient;
+        btSet.enableBluetooth(this, new OnBluetoothEnabledListener() {
+            @Override
+            public void onBluetoothEnabled(boolean success) {
+                if(success) {
+                    getPairedDevices();
                 } else {
-                    Log.i("AsyncTask", "SendDataToNetwork: Cannot send message. Socket is closed");
+                    finish();
                 }
-            } catch (Exception e) {
-                Log.i("AsyncTask", "SendDataToNetwork: Message send failed. Caught an exception");
+            }
+        });
+    }
+    private void addText(String text) {
+        mTextView.append(text);
+        final int scrollAmount = mTextView.getLayout().getLineTop(mTextView.getLineCount()) - mTextView.getHeight();
+        if (scrollAmount > 0)
+            mTextView.scrollTo(0, scrollAmount);
+        else
+            mTextView.scrollTo(0, 0);
+    }
+
+    private void getPairedDevices() {
+        Set<BluetoothDevice> devices =  mClient.getPairedDevices();
+        for(BluetoothDevice device: devices) {
+            addDeviceToArrayAdapter(device);
+        }
+    }
+
+    private void scanDevices() {
+        BluetoothSerialClient btSet = mClient;
+        btSet.scanDevices(getApplicationContext(), new OnScanListener() {
+            String message ="";
+            @Override
+            public void onStart() {
+                Log.d("Test", "Scan Start.");
+                mLoadingDialog.show();
+                message = "Scanning....";
+                mLoadingDialog.setMessage("Scanning....");
+                mLoadingDialog.setCancelable(true);
+                mLoadingDialog.setCanceledOnTouchOutside(false);
+                mLoadingDialog.setOnCancelListener(new OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        BluetoothSerialClient btSet = mClient;
+                        btSet.cancelScan(getApplicationContext());
+                    }
+                });
+            }
+
+            @Override
+            public void onFoundDevice(BluetoothDevice bluetoothDevice) {
+                addDeviceToArrayAdapter(bluetoothDevice);
+                message += "\n" + bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress();
+                mLoadingDialog.setMessage(message);
+            }
+
+            @Override
+            public void onFinish() {
+                Log.d("Test", "Scan finish.");
+                message = "";
+                mLoadingDialog.cancel();
+                mLoadingDialog.setCancelable(false);
+                mLoadingDialog.setOnCancelListener(null);
+                mDeviceListDialog.show();
+            }
+        });
+    }
+
+    private void connect(BluetoothDevice device) {
+        mLoadingDialog.setMessage("Connecting....");
+        mLoadingDialog.setCancelable(false);
+        mLoadingDialog.show();
+        BluetoothSerialClient btSet =  mClient;
+        btSet.connect(getApplicationContext(), device, mBTHandler);
+    }
+    private BluetoothStreamingHandler mBTHandler = new BluetoothStreamingHandler() {
+        ByteBuffer mmByteBuffer = ByteBuffer.allocate(1024);
+
+        @Override
+        public void onError(Exception e) {
+            mLoadingDialog.cancel();
+            Toast.makeText(getApplicationContext(), "The the Bluetooth device Connection error - " +  e.toString(), Toast.LENGTH_SHORT).show();
+            mMenu.getItem(0).setTitle(R.string.action_connect);
+        }
+
+        @Override
+        public void onDisconnected() {
+            mMenu.getItem(0).setTitle(R.string.action_connect);
+            mLoadingDialog.cancel();
+            Toast.makeText(getApplicationContext(), "The the Bluetooth device Disconnected.", Toast.LENGTH_SHORT).show();
+        }
+        @Override
+        public void onData(byte[] buffer, int length) {
+            if(length == 0) return;
+            if(mmByteBuffer.position() + length >= mmByteBuffer.capacity()) {
+                ByteBuffer newBuffer = ByteBuffer.allocate(mmByteBuffer.capacity() * 2);
+                newBuffer.put(mmByteBuffer.array(), 0,  mmByteBuffer.position());
+                mmByteBuffer = newBuffer;
+            }
+            mmByteBuffer.put(buffer, 0, length);
+            if(buffer[length - 1] == '\0') {
+                addText(mClient.getConnectedDevice().getName() + " : " +
+                        new String(mmByteBuffer.array(), 0, mmByteBuffer.position()) + '\n');
+
+                Toast.makeText(getApplicationContext(), "Cannot use the Bluetooth device.", Toast.LENGTH_SHORT).show();
+                mmByteBuffer.clear();
             }
         }
 
-        public String ReceiveDataFromServer() {
+        @Override
+        public void onConnected() {
+            addText("Messgae : Connected. " + mClient.getConnectedDevice().getName() + "\n");
+            mLoadingDialog.cancel();
+            mMenu.getItem(0).setTitle(R.string.action_disconnect);
+        }
+    };
 
-            String retMsg = null;
-            try {
-                int size = dis.readInt();
-                byte[] receiveWhat = new byte[size];
-                dis.read(receiveWhat);
-                retMsg = new String(receiveWhat, "ms949");
-
-            } catch (Exception e) {
-                Log.i("AsyncTask", "ReceiveDataFromNetwork: Message receive failed. Caught an exception");
-            }
-            return retMsg;
-        }
-        @Override
-        protected void onProgressUpdate(byte[]... values) {
-            if (values.length > 0) {
-                Log.i("AsyncTask", "onProgressUpdate: " + values[0].length + " bytes received.");
-//                textStatus.setText(new String(values[0]));
-            }
-        }
-        @Override
-        protected void onCancelled() {
-            Log.i("AsyncTask", "Cancelled.");
-//            btnStart.setVisibility(View.VISIBLE);
-        }
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (result) {
-                Log.i("AsyncTask", "onPostExecute: Completed with an Error.");
-//                textStatus.setText("There was a connection error.");
-            } else {
-                Log.i("AsyncTask", "onPostExecute: Completed.");
-            }
-//            btnStart.setVisibility(View.VISIBLE);
-        }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        mMenu = menu;
+        return true;
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        socketTask.cancel(true); //In case the task is currently running
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean connect = mClient.isConnection();
+        if(item.getItemId() == R.id.action_connect) {
+            if (!connect) {
+                mDeviceListDialog.show();
+            } else {
+                mBTHandler.close();
+            }
+            return true;
+        }else {
+            return true;
+        }
     }
 
+    protected void onDestroy() {
+        super.onDestroy();
+        mClient.claer();
+    };
 }
