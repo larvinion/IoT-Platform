@@ -22,6 +22,7 @@
         android:layout_height="50dp"
         android:id="@+id/passwordInput"
         android:layout_centerHorizontal="true"
+        android:inputType="textPassword"
         android:hint="Password"
         android:layout_below="@+id/emailInput" />
 
@@ -35,15 +36,6 @@
         android:layout_below="@+id/passwordInput"
         android:layout_toStartOf="@+id/signupButton" />
 
-    <Button
-        android:layout_width="150dp"
-        android:layout_height="55dp"
-        android:text="Sign up"
-        android:id="@+id/signupButton"
-        android:textAllCaps="false"
-        android:layout_alignTop="@+id/loginButton"
-        android:layout_alignEnd="@+id/passwordInput" />
-
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,5 +44,16 @@
         android:layout_marginTop="20dp"
         android:layout_below="@+id/loginButton"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:text="Sign up"
+        android:id="@+id/signupButton"
+        android:textAllCaps="false"
+        android:layout_alignBaseline="@+id/loginButton"
+        android:layout_alignBottom="@+id/loginButton"
+        android:layout_alignRight="@+id/passwordInput"
+        android:layout_alignEnd="@+id/passwordInput" />
 
 </RelativeLayout>

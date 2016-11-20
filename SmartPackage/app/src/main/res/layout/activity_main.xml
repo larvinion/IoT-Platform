@@ -7,25 +7,24 @@
     android:layout_height="match_parent"
     android:background="@drawable/background"
     android:gravity="center_horizontal"
-    android:paddingTop="70dp"
-    android:paddingBottom="40dp"
     android:orientation="vertical"
     tools:context="com.example.areumelec.smartpackage.MainActivity"
     app:layout_collapseParallaxMultiplier="0.0">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:weightSum="1">
 
         <Switch
             android:text="외출모드"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/mode"
-            android:layout_weight="0.14" />
-    </LinearLayout>
+            android:layout_weight="0.14"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="200dp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
