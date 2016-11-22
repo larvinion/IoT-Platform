@@ -1,11 +1,11 @@
 [
     {
-        "merged": "/Users/hbkim/Documents/IoT-Platform/SmartPackage/vitamio/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/scrubber_control_pressed_holo.png",
-        "source": "/Users/hbkim/Documents/IoT-Platform/SmartPackage/vitamio/build/intermediates/bundles/debug/res/drawable-xhdpi-v4/scrubber_control_pressed_holo.png"
-    },
-    {
         "merged": "/Users/hbkim/Documents/IoT-Platform/SmartPackage/vitamio/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/scrubber_control_focused_holo.png",
         "source": "/Users/hbkim/Documents/IoT-Platform/SmartPackage/vitamio/build/intermediates/bundles/debug/res/drawable-xhdpi-v4/scrubber_control_focused_holo.png"
+    },
+    {
+        "merged": "/Users/hbkim/Documents/IoT-Platform/SmartPackage/vitamio/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/scrubber_control_pressed_holo.png",
+        "source": "/Users/hbkim/Documents/IoT-Platform/SmartPackage/vitamio/build/intermediates/bundles/debug/res/drawable-xhdpi-v4/scrubber_control_pressed_holo.png"
     },
     {
         "merged": "/Users/hbkim/Documents/IoT-Platform/SmartPackage/vitamio/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/scrubber_primary_holo.9.png",

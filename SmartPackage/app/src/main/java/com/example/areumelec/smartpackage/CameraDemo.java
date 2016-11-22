@@ -2,6 +2,7 @@ package com.example.areumelec.smartpackage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.net.wifi.WifiInfo;
@@ -12,6 +13,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,16 +30,13 @@ import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
 
-public class CameraDemo extends Activity implements OnBufferingUpdateListener, OnCompletionListener, OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
+public class CameraDemo extends Activity implements OnBufferingUpdateListener, OnCompletionListener, OnPreparedListener, OnVideoSizeChangedListener, View.OnClickListener, SurfaceHolder.Callback {
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     // SharedPreferences에 저장할 때 key 값으로 사용됨.
     public static final String PROPERTY_REG_ID = "registration_id";
-
-    // SharedPreferences에 저장할 때 key 값으로 사용됨.
     private static final String PROPERTY_APP_VERSION = "4.3";
-//    private static final String TAG = "ICELANCER";
 
     String SENDER_ID = "SmartPackage-142611";
 
@@ -64,6 +65,11 @@ public class CameraDemo extends Activity implements OnBufferingUpdateListener, O
     private WifiManager wifiManager;
     private WifiInfo wifiInfo;
 
+    private Button captureBtn;
+    private Button loadBtn;
+    private ImageButton leftLotateBtn;
+    private ImageButton rightLotateBtn;
+
     private static final String TAG = "MediaPlayer";
 
     @Override
@@ -75,7 +81,7 @@ public class CameraDemo extends Activity implements OnBufferingUpdateListener, O
         wifiInfo = wifiManager.getConnectionInfo();
         ip = wifiInfo.getIpAddress();
 //        ipAddress = String.format("%d.%d.%d.%d",(ip & 0xff),(ip >> 8 & 0xff),(ip >> 16 & 0xff),0x01);
-        ipAddress = "192.168.0.62";
+        ipAddress = "192.168.0.70";
         port = "8554";
 
         if (!LibsChecker.checkVitamioLibs(this))
@@ -87,7 +93,42 @@ public class CameraDemo extends Activity implements OnBufferingUpdateListener, O
         extras = getIntent().getExtras();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+        captureBtn = (Button) findViewById(R.id.capture);
+        loadBtn = (Button) findViewById(R.id.load);
+        leftLotateBtn = (ImageButton) findViewById(R.id.leftrotate);
+        rightLotateBtn = (ImageButton) findViewById(R.id.rightrotate);
 
+        captureBtn.setOnClickListener(this);
+        loadBtn.setOnClickListener(this);
+        leftLotateBtn.setOnClickListener(this);
+        rightLotateBtn.setOnClickListener(this);
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.capture:
+                Toast.makeText(getApplicationContext(), "잠시만 기다려주세요.", Toast.LENGTH_SHORT).show();
+                Handler mHandler = new Handler();
+                mHandler.postDelayed(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast.makeText(getApplicationContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }, 2000);
+                break;
+            case R.id.load:
+                //SensorCheck activity로 가는 인텐트 생성
+//                Intent intent2 = new Intent(getApplicationContext(), SensorDemo.class);
+                //액티비티 시작!
+//                startActivity(intent2);
+                break;
+            case R.id.leftrotate:
+                break;
+            case R.id.rightrotate:
+                break;
+        }
     }
 
     private void playVideo() {

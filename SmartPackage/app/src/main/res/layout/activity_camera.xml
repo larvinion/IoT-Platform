@@ -77,22 +77,20 @@
             android:weightSum="1">
 
             <ImageButton
-                android:layout_height="82dp"
+                android:layout_height="100dp"
                 android:id="@+id/leftrotate"
-                app:srcCompat="@drawable/left"
+                android:src="@drawable/left"
                 android:scaleType="fitCenter"
-                android:layout_width="107dp"
+                android:layout_width="100dp"
                 android:background="@android:color/darker_gray" />
 
             <ImageButton
-                android:layout_height="89dp"
-                app:srcCompat="@drawable/right"
+                android:layout_height="100dp"
                 android:id="@+id/rightrotate"
+                android:src="@drawable/right"
                 android:scaleType="fitCenter"
-                android:layout_width="93dp"
-                android:background="@android:color/darker_gray"
-                android:layout_weight="0.07" />
+                android:layout_width="100dp"
+                android:background="@android:color/darker_gray" />
         </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>
