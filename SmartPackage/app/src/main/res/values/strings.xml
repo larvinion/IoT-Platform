@@ -20,6 +20,6 @@
     <string name="action_settings"></string>
 
 
-    <string name="action_arduinocode">Show Arduino code</string>
+    <string name="action_option">Option</string>
 
 </resources>

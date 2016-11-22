@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_activity_select);
+        setContentView(R.layout.activity_main);
 
         backPressCloseHandler = new BackPressCloseHandler(this);
         mn_layout = (LinearLayout) findViewById(R.id.mn_layout);
