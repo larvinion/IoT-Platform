@@ -1,7 +1,9 @@
 package com.example.areumelec.smartpackage;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 
 
@@ -16,6 +18,8 @@ import android.bluetooth.BluetoothDevice;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import android.widget.ArrayAdapter;
 import android.app.ProgressDialog;
@@ -36,7 +40,10 @@ public class SensorDemo extends Activity {
     private LinkedList<BluetoothDevice> mBluetoothDevices = new LinkedList<BluetoothDevice>();
     private ArrayAdapter<String> mDeviceArrayAdapter;
 
-    private TextView mTextView;
+    private TextView mTextView_temperature;
+    private TextView mTextView_flame;
+    private TextView mTextView_door;
+    private TextView mTextView_gas;
     private ProgressDialog mLoadingDialog;
     private AlertDialog mDeviceListDialog;
     private Menu mMenu;
@@ -53,7 +60,7 @@ public class SensorDemo extends Activity {
             Toast.makeText(getApplicationContext(), "Cannot use the Bluetooth device.", Toast.LENGTH_SHORT).show();
             finish();
         }
-
+        initSensorTextView();
         initProgressDialog();
         initDeviceListDialog();
     }
@@ -113,7 +120,6 @@ public class SensorDemo extends Activity {
         mBluetoothDevices.add(device);
         mDeviceArrayAdapter.add(device.getName() + "\n" + device.getAddress() );
         mDeviceArrayAdapter.notifyDataSetChanged();
-
     }
 
     private void enableBluetooth() {
@@ -128,14 +134,6 @@ public class SensorDemo extends Activity {
                 }
             }
         });
-    }
-    private void addText(String text) {
-        mTextView.append(text);
-        final int scrollAmount = mTextView.getLayout().getLineTop(mTextView.getLineCount()) - mTextView.getHeight();
-        if (scrollAmount > 0)
-            mTextView.scrollTo(0, scrollAmount);
-        else
-            mTextView.scrollTo(0, 0);
     }
 
     private void getPairedDevices() {
@@ -218,17 +216,17 @@ public class SensorDemo extends Activity {
             }
             mmByteBuffer.put(buffer, 0, length);
             if(buffer[length - 1] == '\0') {
-                addText(mClient.getConnectedDevice().getName() + " : " +
-                        new String(mmByteBuffer.array(), 0, mmByteBuffer.position()) + '\n');
-
-                Toast.makeText(getApplicationContext(), "Cannot use the Bluetooth device.", Toast.LENGTH_SHORT).show();
+                /* 데이터를 받아와서 집어넣는 부분 Buffer*/
+                readSensorData(new String(mmByteBuffer.array(), 0, mmByteBuffer.position()));
+                // 데이터 받아오면 Toast 띄워줌
+                Toast.makeText(getApplicationContext(), "Receive Sensor Data", Toast.LENGTH_SHORT).show();
                 mmByteBuffer.clear();
             }
         }
 
         @Override
         public void onConnected() {
-            addText("Messgae : Connected. " + mClient.getConnectedDevice().getName() + "\n");
+            Toast.makeText(getApplicationContext(), "Messgae : " + mClient.getConnectedDevice().getName() + "Connected. ", Toast.LENGTH_SHORT).show();
             mLoadingDialog.cancel();
             mMenu.getItem(0).setTitle(R.string.action_disconnect);
         }
@@ -260,4 +258,15 @@ public class SensorDemo extends Activity {
         super.onDestroy();
         mClient.claer();
     };
+
+    private void initSensorTextView(){
+        mTextView_temperature = (TextView) findViewById(R.id.temperature_value);
+        mTextView_flame = (TextView) findViewById(R.id.flame_value);
+        mTextView_door = (TextView) findViewById(R.id.door_value);
+        mTextView_gas = (TextView) findViewById(R.id.gas_value);
+    }
+
+    private void readSensorData(String text) {
+        mTextView_flame.setText(text);
+    }
 }

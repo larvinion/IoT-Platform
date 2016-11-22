@@ -7,6 +7,7 @@ SoftwareSerial BTSerial(10, 11); // BLE(TXD) - RX(Arduino - 10) | BLE(RXD) - TX(
 uint8_t buffer[256];
 uint8_t index = 0;
 uint8_t data;
+boolean change = true;
 
 void setup(){
   Serial.begin(9600);        //Arduino Bluetooth - PC Serial
@@ -18,31 +19,24 @@ void setup(){
 }
 
 void loop(){
-   while (Serial1.available()) {
-     data = Serial1.read();
-     buffer[index++] = data;
-     if(index == 256 || data =='\0')break;
-     
-     // 시리얼 통신에서는 9600bps 기준으로
-     // read 를 사용할 때 1ms 의 딜레이를 줘야 한다.
-     delay(1);
+   if(change == true){
+     buffer[index++] = '1';
+     buffer[index++] = '2';
+     buffer[index++] = '3';
+     buffer[index++] = '\0';
+     change = false;
    }
-   
-   for(uint8_t i = 0; i< index; i++){
-     Serial.write(buffer[i]);
+   else {
+     buffer[index++] = '3';
+     buffer[index++] = '2';
+     buffer[index++] = '1';
+     buffer[index++] = '\0';
+     change = true;
    }
-   
    for(uint8_t i = 0; i< index; i++){
      Serial1.write(buffer[i]);
+     delay(100);
    }
-   
-/*
-  if (Serial.available()) {
-      Serial1.write(Serial.read());
-      delay(1);
-      Serial1.flush();
-  }
-*/
   index = 0;
 }
 

@@ -15,7 +15,7 @@ public class Intro extends Activity {
         handler.postDelayed(new Runnable() {
             public void run() {
                 Intent intent = new Intent(Intro.this,
-                        LoginActivity.class);//기능선택 화면으로 이동
+                        MainActivity.class);//기능선택 화면으로 이동
                 startActivity(intent);
                 finish();
             }
