@@ -1,211 +1,76 @@
 package com.example.areumelec.smartpackage;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Notification;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 
-
-import com.example.areumelec.Bluetooth.BluetoothSerialClient;
-import com.example.areumelec.Bluetooth.BluetoothSerialClient.BluetoothStreamingHandler;
-import com.example.areumelec.Bluetooth.BluetoothSerialClient.OnBluetoothEnabledListener;
-import com.example.areumelec.Bluetooth.BluetoothSerialClient.OnScanListener;
-
-
+import com.example.areumelec.Bluetooth.*;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-
-import java.nio.ByteBuffer;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+import android.os.Handler;
 
 import android.widget.ArrayAdapter;
-import android.app.ProgressDialog;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class SensorDemo extends Activity {
-    private LinkedList<BluetoothDevice> mBluetoothDevices = new LinkedList<BluetoothDevice>();
-    private ArrayAdapter<String> mDeviceArrayAdapter;
+    // //////////////////블루투스 관련////////////////////
+    private static final String TAG = "BluetoothService";
+    // Message types sent from the BluetoothChatService Handler
+    public static final int MESSAGE_STATE_CHANGE = 1;
+    public static final int MESSAGE_READ = 2;
+    public static final int MESSAGE_WRITE = 3;
+    public static final int MESSAGE_DEVICE_NAME = 4;
+    public static final int MESSAGE_TOAST = 5;
+
+    public static final String DEVICE_NAME = "device_name";
+    public static final String TOAST = "toast";
+
+    // Name of the connected device
+    private String mConnectedDeviceName = null;
+    // Array adapter for the conversation thread
+    private ArrayAdapter<String> mConversationArrayAdapter;
+    // Local Bluetooth adapter
+    private BluetoothAdapter mBluetoothAdapter = null;
+    // Member object for the chat services
+    public BluetoothService bt = null;
 
     private TextView mTextView_temperature;
     private TextView mTextView_flame;
     private TextView mTextView_door;
     private TextView mTextView_gas;
-    private ProgressDialog mLoadingDialog;
-    private AlertDialog mDeviceListDialog;
-    private Menu mMenu;
-    private BluetoothSerialClient mClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sensor);
 
-        mClient = BluetoothSerialClient.getInstance();
-
-        if(mClient == null) {
-            Toast.makeText(getApplicationContext(), "Cannot use the Bluetooth device.", Toast.LENGTH_SHORT).show();
+        // MainActivity에서 연결한 BlueTooth 정보를 받아옴 ///////////
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        // If the adapter is null, then Bluetooth is not supported
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, "Bluetooth is not available",
+                    Toast.LENGTH_LONG).show();
             finish();
+            return;
         }
+        bt = MainActivity.btService;
+        if (bt != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't
+            // started already
+            if (bt.getState() == BluetoothService.STATE_NONE) {
+                bt.start();
+            }
+        }
+        /////////////////////////////////////////////////
+
         initSensorTextView();
-        initProgressDialog();
-        initDeviceListDialog();
     }
 
-    @Override
-    protected void onPause() {
-        mClient.cancelScan(getApplicationContext());
-        super.onPause();
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        enableBluetooth();
-    }
-    private void initProgressDialog() {
-        mLoadingDialog = new ProgressDialog(this);
-        mLoadingDialog.setCancelable(false);
-    }
-    private void initWidget() {
-
-     }
-
-    private void initDeviceListDialog() {
-        mDeviceArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.item_device);
-        ListView listView = new ListView(getApplicationContext());
-        listView.setAdapter(mDeviceArrayAdapter);
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item =  (String) parent.getItemAtPosition(position);
-                for(BluetoothDevice device : mBluetoothDevices) {
-                    if(item.contains(device.getAddress())) {
-                        connect(device);
-                        mDeviceListDialog.cancel();
-                    }
-                }
-            }
-        });
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select bluetooth device");
-        builder.setView(listView);
-        builder.setPositiveButton("Scan",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        scanDevices();
-                    }
-                });
-        mDeviceListDialog = builder.create();
-        mDeviceListDialog.setCanceledOnTouchOutside(false);
-    }
-
-    private void addDeviceToArrayAdapter(BluetoothDevice device) {
-        if(mBluetoothDevices.contains(device)) {
-            mBluetoothDevices.remove(device);
-            mDeviceArrayAdapter.remove(device.getName() + "\n" + device.getAddress());
-        }
-        mBluetoothDevices.add(device);
-        mDeviceArrayAdapter.add(device.getName() + "\n" + device.getAddress() );
-        mDeviceArrayAdapter.notifyDataSetChanged();
-    }
-
-    private void enableBluetooth() {
-        BluetoothSerialClient btSet =  mClient;
-        btSet.enableBluetooth(this, new OnBluetoothEnabledListener() {
-            @Override
-            public void onBluetoothEnabled(boolean success) {
-                if(success) {
-                    getPairedDevices();
-                } else {
-                    finish();
-                }
-            }
-        });
-    }
-
-    private void getPairedDevices() {
-        Set<BluetoothDevice> devices =  mClient.getPairedDevices();
-        for(BluetoothDevice device: devices) {
-            addDeviceToArrayAdapter(device);
-        }
-    }
-
-    private void scanDevices() {
-        BluetoothSerialClient btSet = mClient;
-        btSet.scanDevices(getApplicationContext(), new OnScanListener() {
-            String message ="";
-            @Override
-            public void onStart() {
-                Log.d("Test", "Scan Start.");
-                mLoadingDialog.show();
-                message = "Scanning....";
-                mLoadingDialog.setMessage("Scanning....");
-                mLoadingDialog.setCancelable(true);
-                mLoadingDialog.setCanceledOnTouchOutside(false);
-                mLoadingDialog.setOnCancelListener(new OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        BluetoothSerialClient btSet = mClient;
-                        btSet.cancelScan(getApplicationContext());
-                    }
-                });
-            }
-
-            @Override
-            public void onFoundDevice(BluetoothDevice bluetoothDevice) {
-                addDeviceToArrayAdapter(bluetoothDevice);
-                message += "\n" + bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress();
-                mLoadingDialog.setMessage(message);
-            }
-
-            @Override
-            public void onFinish() {
-                Log.d("Test", "Scan finish.");
-                message = "";
-                mLoadingDialog.cancel();
-                mLoadingDialog.setCancelable(false);
-                mLoadingDialog.setOnCancelListener(null);
-                mDeviceListDialog.show();
-            }
-        });
-    }
-
-    private void connect(BluetoothDevice device) {
-        mLoadingDialog.setMessage("Connecting....");
-        mLoadingDialog.setCancelable(false);
-        mLoadingDialog.show();
-        BluetoothSerialClient btSet =  mClient;
-        btSet.connect(getApplicationContext(), device, mBTHandler);
-    }
-    private BluetoothStreamingHandler mBTHandler = new BluetoothStreamingHandler() {
-        ByteBuffer mmByteBuffer = ByteBuffer.allocate(1024);
-
-        @Override
-        public void onError(Exception e) {
-            mLoadingDialog.cancel();
-            Toast.makeText(getApplicationContext(), "The the Bluetooth device Connection error - " +  e.toString(), Toast.LENGTH_SHORT).show();
-            mMenu.getItem(0).setTitle(R.string.action_connect);
-        }
-
-        @Override
-        public void onDisconnected() {
-            mMenu.getItem(0).setTitle(R.string.action_connect);
-            mLoadingDialog.cancel();
-            Toast.makeText(getApplicationContext(), "The the Bluetooth device Disconnected.", Toast.LENGTH_SHORT).show();
-        }
+/**
         @Override
         public void onData(byte[] buffer, int length) {
             if(length == 0) return;
@@ -216,52 +81,75 @@ public class SensorDemo extends Activity {
             }
             mmByteBuffer.put(buffer, 0, length);
             if(buffer[length - 1] == '\0') {
-                /* 데이터를 받아와서 집어넣는 부분 Buffer*/
+                // 데이터를 받아와서 집어넣는 부분 Buffer
                 readSensorData(new String(mmByteBuffer.array(), 0, mmByteBuffer.position()));
                 mmByteBuffer.clear();
             }
-        }
-
-        @Override
-        public void onConnected() {
-            Toast.makeText(getApplicationContext(), "Messgae : " + mClient.getConnectedDevice().getName() + "Connected. ", Toast.LENGTH_SHORT).show();
-            mLoadingDialog.cancel();
-            mMenu.getItem(0).setTitle(R.string.action_disconnect);
-        }
-    };
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        mMenu = menu;
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        boolean connect = mClient.isConnection();
-        if(item.getItemId() == R.id.action_connect) {
-            if (!connect) {
-                mDeviceListDialog.show();
-            } else {
-                mBTHandler.close();
-            }
-            return true;
-        }else {
-            return true;
-        }
-    }
-
-    protected void onDestroy() {
-        super.onDestroy();
-        mClient.claer();
-    };
-
+        }*/
     private void initSensorTextView(){
         mTextView_temperature = (TextView) findViewById(R.id.temperature_value);
         mTextView_flame = (TextView) findViewById(R.id.flame_value);
         mTextView_door = (TextView) findViewById(R.id.door_value);
         mTextView_gas = (TextView) findViewById(R.id.gas_value);
+    }
+
+    ////////////블루투스 핸들러///////////
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothService.STATE_CONNECTED:
+                            setStatus(getString(R.string.title_connected_to,mConnectedDeviceName));
+                            mConversationArrayAdapter.clear();
+                            break;
+                        case BluetoothService.STATE_CONNECTING:
+                            setStatus(R.string.title_connecting);
+                            break;
+                        case BluetoothService.STATE_LISTEN:
+                        case BluetoothService.STATE_NONE:
+                            setStatus(R.string.title_not_connected);
+                            break;
+                    }
+                    break;
+                case MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    break;
+                case MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  "
+                            + readMessage);
+                    break;
+                case MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
+                    Toast.makeText(getApplicationContext(),
+                            "Connected to " + mConnectedDeviceName,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case MESSAGE_TOAST:
+                    Toast.makeText(getApplicationContext(),
+                            msg.getData().getString(TOAST), Toast.LENGTH_SHORT)
+                            .show();
+                    break;
+            }
+        }
+    };
+
+    private final void setStatus(int resId) {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setSubtitle(resId);
+    }
+
+    private final void setStatus(CharSequence subTitle) {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setSubtitle(subTitle);
     }
 
     private void readSensorData(String text) {
@@ -270,7 +158,6 @@ public class SensorDemo extends Activity {
         }else{
             mTextView_door.setText("Open");
         }
-        text.
         mTextView_flame.setText(text);
     }
 }

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SmartPackage</string>
     <string name="title_activity_login">Sign in</string>
@@ -14,6 +15,19 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <!-- Bluetooth -->
+    <string name="title_paired_devices">title_paired_devices</string>
+    <string name="title_other_devices">title_other_devices</string>
+    <string name="button_scan">button_scan</string>
+    <string name="none_paired">none_paired</string>
+    <string name="scanning">scanning</string>
+    <string name="select_device">select_device</string>
+    <string name="none_found">none_found</string>
+    <string name="title_not_connected">title_not_connected</string>
+    <string name="title_connecting">title_connecting</string>
+    <string name="title_connected_to">title_connected_to</string>
+    <string name="not_connected">not_connected</string>
 
     <string name="action_connect">Connect</string>
     <string name="action_disconnect">Disconnect</string>
