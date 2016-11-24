@@ -218,8 +218,6 @@ public class SensorDemo extends Activity {
             if(buffer[length - 1] == '\0') {
                 /* 데이터를 받아와서 집어넣는 부분 Buffer*/
                 readSensorData(new String(mmByteBuffer.array(), 0, mmByteBuffer.position()));
-                // 데이터 받아오면 Toast 띄워줌
-                Toast.makeText(getApplicationContext(), "Receive Sensor Data", Toast.LENGTH_SHORT).show();
                 mmByteBuffer.clear();
             }
         }
@@ -267,6 +265,12 @@ public class SensorDemo extends Activity {
     }
 
     private void readSensorData(String text) {
+        if(text.contains("c")){
+            mTextView_door.setText("Close");
+        }else{
+            mTextView_door.setText("Open");
+        }
+        text.
         mTextView_flame.setText(text);
     }
 }
