@@ -265,12 +265,36 @@ public class SensorDemo extends Activity {
     }
 
     private void readSensorData(String text) {
-        if(text.contains("c")){
+        String buf = text;
+
+        // Door
+        if(buf.contains("c")){
+            buf = buf.replace("c","");
             mTextView_door.setText("Close");
-        }else{
+        }else if(buf.contains("o")){
+            buf = buf.replace("o","");
             mTextView_door.setText("Open");
         }
-        text.
-        mTextView_flame.setText(text);
+
+        // MQ-7 Gas
+        if(buf.contains("g")){
+            buf = buf.replace("g","");
+            mTextView_gas.setText("Detect");
+        }else if(buf.contains("n")){
+            buf = buf.replace("n","");
+            mTextView_gas.setText("None");
+        }
+
+        // Flame
+        if(buf.contains("f")){
+            buf = buf.replace("f","");
+            mTextView_flame.setText("Detect");
+        }else if(buf.contains("s")){
+            buf = buf.replace("s","");
+            mTextView_flame.setText("None");
+        }
+
+        // mTextView_temperature
+        mTextView_temperature.setText(buf);
     }
 }
