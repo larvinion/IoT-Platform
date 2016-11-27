@@ -79,9 +79,6 @@ public class SensorDemo extends Activity {
         mLoadingDialog = new ProgressDialog(this);
         mLoadingDialog.setCancelable(false);
     }
-    private void initWidget() {
-
-     }
 
     private void initDeviceListDialog() {
         mDeviceArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.item_device);
@@ -294,7 +291,7 @@ public class SensorDemo extends Activity {
             mTextView_flame.setText("None");
         }
 
-        // mTextView_temperature
+        // Temperature
         mTextView_temperature.setText(buf);
     }
 }
