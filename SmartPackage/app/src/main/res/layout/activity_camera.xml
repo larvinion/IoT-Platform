@@ -50,16 +50,8 @@
             android:weightSum="1">
 
             <Button
-                android:text="저장소"
-                android:layout_width="wrap_content"
-                android:id="@+id/load"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/capture" />
-
-            <Button
                 android:text="사진 촬영"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:id="@+id/capture"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"

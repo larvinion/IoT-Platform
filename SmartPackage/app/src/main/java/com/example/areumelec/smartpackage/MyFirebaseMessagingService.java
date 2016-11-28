@@ -39,11 +39,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(String messageBody) {
 
-<<<<<<< HEAD
         Intent intent = new Intent(this, MainActivity.class);
-=======
-        Intent intent = new Intent(this, SensorDemo.class);
->>>>>>> 6a8bc0b2698f8b053f09cc670512b901f6f8327e
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
@@ -52,7 +48,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // App이 실행중일 때,
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.background)
-                .setContentTitle("FCM Message")
+                .setContentTitle("IoT Flatform")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
