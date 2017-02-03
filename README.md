@@ -1,5 +1,4 @@
 # IoT-Platform
-#Graduation Project
 #Smart Package
     이 프로그램은 스마트홈을 위한 가정용 IoT-Platform이다. 
     오픈소스 하드웨어(라즈베리파이, 아두이노)를 활용하며, 이를 관리하기 위한 어플리케이션을 제공한다.
